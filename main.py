@@ -4,9 +4,8 @@
 import argparse
 import configparser
 import os
-import time
 import env
-import blog
+from blogs import *
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -23,15 +22,6 @@ if __name__ == '__main__':
     author_id = cp.get("csdn", "author")
     cookie = cp.get("csdn", "cookie").encode("utf-8").decode("latin1")
 
-    blogs = []
-    for page in range(start_page, end_page + 1):
-        page_blogs = blog.scan_blog_list_page(author_id=author_id, page=page)
-        if len(page_blogs) == 0:
-            break
-        else:
-            blogs.extend(page_blogs)
-    for blog in blogs:
-        blog.request_detail(cookie)
-        print(blog.__dict__)
-        time.sleep(1)
-
+    blog = CSDNBlog(
+        author_id=author_id, cookie=cookie, start_page=start_page, end_page=end_page)
+    blog.scan()
