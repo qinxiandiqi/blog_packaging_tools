@@ -6,6 +6,8 @@ import configparser
 import os
 import env
 from blogs import *
+from hugo.hugo import HugoPacker
+from packaging import *
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -25,3 +27,6 @@ if __name__ == '__main__':
     blog = CSDNBlog(
         author_id=author_id, cookie=cookie, start_page=start_page, end_page=end_page)
     blog.scan()
+
+    packer = HugoPacker()
+    packer.pack(blog=blog)
