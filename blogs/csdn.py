@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*-coding:utf-8 -*-
 
 from datetime import datetime
 from typing import List
@@ -12,12 +11,15 @@ from blogs.blog import *
 
 
 class CSDNBlog(Blog):
+    """CSDN博客"""
 
-    def __init__(self, author_id: str, cookie: str, start_page: int = 1, end_page: int = 100) -> None:
-        super().__init__(author_id)
-        self.cookie = cookie
-        self.start_page = start_page
-        self.end_page = end_page
+    def __init__(self, cp: ConfigParser) -> None:
+        super().__init__(cp)
+        self.author_id = cp.get("csdn", "author")
+        self.cookie = cp.get("csdn", "cookie").encode(
+            "utf-8").decode("latin1")
+        self.start_page = cp.getint("csdn", "start_page")
+        self.end_page = cp.getint("csdn", "end_page")
 
     def _scan_posts(self) -> List:
         posts = []
@@ -33,8 +35,7 @@ class CSDNBlog(Blog):
             time.sleep(1)
 
     def __scan_posts_by_page(self, page: int) -> List:
-        """扫描博客文章从博客分页获取文章列表基本信息
-        """
+        """扫描博客文章，从博客分页获取文章列表基本信息"""
         url = f'https://blog.csdn.net/{self.author_id}/article/list/{page}'
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.67 Safari/537.36 Edg/87.0.664.47'}
@@ -62,6 +63,7 @@ class CSDNBlog(Blog):
 
 
 class CSDNPost(Post):
+    """CSDN博客文章内容"""
 
     def __init__(self, id: str = "", publish_time: datetime = ...,
                  read_num: int = 0, comment_num: int = 0, name: str = "",

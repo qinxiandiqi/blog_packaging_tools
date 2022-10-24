@@ -1,10 +1,9 @@
 #!/usr/bin/env python
-# -*-coding:utf-8 -*-
 
 from blogs import *
 
 class Packer:
-    def __init__(self):
+    def __init__(self, cp: ConfigParser):
         pass
 
     def pack(self, blog: Blog):

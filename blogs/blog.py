@@ -1,15 +1,16 @@
 #!/usr/bin/env python
-# -*-coding:utf-8 -*-
 
 from datetime import datetime
 from typing import List
 from enum import Enum, unique
+from configparser import ConfigParser
 
 
 class Blog:
+    """博客"""
 
-    def __init__(self, author_id: str) -> None:
-        self.author_id = author_id
+    def __init__(self, cp: ConfigParser) -> None:
+        self.cp = cp
         self.posts = []
 
     def scan(self):

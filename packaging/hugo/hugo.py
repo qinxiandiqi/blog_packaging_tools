@@ -1,9 +1,14 @@
 #!/usr/bin/env python
-# -*-coding:utf-8 -*-
 
 from packaging.packer import *
 
 
 class HugoPacker(Packer):
-    def __init__(self):
-        super().__init__()
+    """hugo打包器"""
+
+    def __init__(self, cp: ConfigParser):
+        super().__init__(cp)
+
+    def pack(self, blog: Blog):
+        """打包博客"""
+        return super().pack(blog)

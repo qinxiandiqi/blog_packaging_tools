@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*-coding:utf-8 -*-
 
 import argparse
 import configparser
@@ -24,8 +23,7 @@ if __name__ == '__main__':
     author_id = cp.get("csdn", "author")
     cookie = cp.get("csdn", "cookie").encode("utf-8").decode("latin1")
 
-    blog = CSDNBlog(
-        author_id=author_id, cookie=cookie, start_page=start_page, end_page=end_page)
+    blog = CSDNBlog(cp=cp)
     blog.scan()
 
     packer = HugoPacker()
