@@ -1,6 +1,7 @@
 {
     "python.analysis.extraPaths": [
         "./blogs",
-        "./packaging"
+        "./packaging",
+        "./utils"
     ]
 }

@@ -1,65 +1,15 @@
 #!/usr/bin/env python
 
+import json
+import time
 from datetime import datetime
 from typing import List
+
+import html2text
 import requests
 from bs4 import BeautifulSoup
-import json
-import html2text
-import time
+
 from blogs.blog import *
-
-
-class CSDNBlog(Blog):
-    """CSDN博客"""
-
-    def __init__(self, cp: ConfigParser) -> None:
-        super().__init__(cp)
-        self.author_id = cp.get("csdn", "author")
-        self.cookie = cp.get("csdn", "cookie").encode(
-            "utf-8").decode("latin1")
-        self.start_page = cp.getint("csdn", "start_page")
-        self.end_page = cp.getint("csdn", "end_page")
-
-    def _scan_posts(self) -> List:
-        posts = []
-        for page in range(self.start_page, self.end_page + 1):
-            page_posts = self.__scan_posts_by_page(page=page)
-            if len(page_posts) == 0:
-                break
-            else:
-                posts.extend(page_posts)
-        for post in posts:
-            post.sync(self.cookie)
-            print(post.__dict__)
-            time.sleep(1)
-
-    def __scan_posts_by_page(self, page: int) -> List:
-        """扫描博客文章，从博客分页获取文章列表基本信息"""
-        url = f'https://blog.csdn.net/{self.author_id}/article/list/{page}'
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.67 Safari/537.36 Edg/87.0.664.47'}
-        response = requests.get(url, headers=headers)
-        parser = BeautifulSoup(response.content, "html.parser")
-        divs = parser.find_all(
-            'div', attrs={'class': 'article-item-box csdn-tracking-statistics'})
-        posts = []
-        for div in divs:
-            try:
-                post = CSDNPost()
-                post.id = div.attrs["data-articleid"]
-                date = div.find('span', attrs={'class': 'date'}).get_text()
-                post.publish_time = datetime.strptime(
-                    date, "%Y-%m-%d %H:%M:%S")
-                nums = div.find_all('span', attrs={'class': 'read-num'})
-                if len(nums) >= 1:
-                    post.read_num = int(nums[0].get_text())
-                if len(nums) >= 2:
-                    post.comment_num = int(nums[1].get_text())
-                posts.append(post)
-            except:
-                print('Wrong, ' + div)
-        return posts
 
 
 class CSDNPost(Post):
@@ -99,3 +49,55 @@ class CSDNPost(Post):
         except Exception as e:
             print(e)
             print(url)
+
+
+class CSDNBlog(Blog):
+    """CSDN博客"""
+
+    def __init__(self, cp: ConfigParser) -> None:
+        super().__init__(cp)
+        self.author_id = cp.get("csdn", "author")
+        self.cookie = cp.get("csdn", "cookie").encode(
+            "utf-8").decode("latin1")
+        self.start_page = cp.getint("csdn", "start_page")
+        self.end_page = cp.getint("csdn", "end_page")
+
+    def _scan_posts(self) -> List[Post]:
+        posts = []
+        for page in range(self.start_page, self.end_page + 1):
+            page_posts = self.__scan_posts_by_page(page=page)
+            if len(page_posts) == 0:
+                break
+            else:
+                posts.extend(page_posts)
+        for post in posts:
+            post.sync(self.cookie)
+            print(post.__dict__)
+            time.sleep(1)
+
+    def __scan_posts_by_page(self, page: int) -> List[Post]:
+        """扫描博客文章，从博客分页获取文章列表基本信息"""
+        url = f'https://blog.csdn.net/{self.author_id}/article/list/{page}'
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.67 Safari/537.36 Edg/87.0.664.47'}
+        response = requests.get(url, headers=headers)
+        parser = BeautifulSoup(response.content, "html.parser")
+        divs = parser.find_all(
+            'div', attrs={'class': 'article-item-box csdn-tracking-statistics'})
+        posts = []
+        for div in divs:
+            try:
+                post = CSDNPost()
+                post.id = div.attrs["data-articleid"]
+                date = div.find('span', attrs={'class': 'date'}).get_text()
+                post.publish_time = datetime.strptime(
+                    date, "%Y-%m-%d %H:%M:%S")
+                nums = div.find_all('span', attrs={'class': 'read-num'})
+                if len(nums) >= 1:
+                    post.read_num = int(nums[0].get_text())
+                if len(nums) >= 2:
+                    post.comment_num = int(nums[1].get_text())
+                posts.append(post)
+            except:
+                print('Wrong, ' + div)
+        return posts

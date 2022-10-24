@@ -1,25 +1,9 @@
 #!/usr/bin/env python
 
-from datetime import datetime
-from typing import List
-from enum import Enum, unique
 from configparser import ConfigParser
-
-
-class Blog:
-    """博客"""
-
-    def __init__(self, cp: ConfigParser) -> None:
-        self.cp = cp
-        self.posts = []
-
-    def scan(self):
-        """扫描博客文章"""
-        self.posts = self._scan_posts()
-
-    def _scan_posts(self) -> List:
-        """扫描博客文章"""
-        return []
+from datetime import datetime
+from enum import Enum, unique
+from typing import List
 
 
 @unique
@@ -47,3 +31,19 @@ class Post:
         self.type = type
         self.html = html
         self.markdown = markdown
+
+
+class Blog:
+    """博客"""
+
+    def __init__(self, cp: ConfigParser) -> None:
+        self.cp = cp
+        self.posts: List[Post] = []
+
+    def scan(self) -> None:
+        """扫描博客文章"""
+        self.posts = self._scan_posts()
+
+    def _scan_posts(self) -> List[Post]:
+        """扫描博客文章"""
+        return []
