@@ -14,5 +14,5 @@ if __name__ == '__main__':
     blog = CSDNBlog(cp=cp)
     blog.scan()
 
-    packer = HugoPacker()
+    packer = HugoPacker(cp=cp, output_dir=os.path.join(env.output_dir, "hugo"))
     packer.pack_blog(blog=blog)

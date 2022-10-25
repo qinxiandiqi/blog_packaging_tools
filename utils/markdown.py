@@ -19,8 +19,8 @@ class MarkdownImage:
     def download_to_local(self):
         md5 = hashlib.md5()
         md5.update(self.url)
-        file_name = f"{md5.hexdigest}.{self.url.split('.')[-1]}"
-        self.local_file = os.path.join(self.local_dir, file_name)
+        self.file_name = f"{md5.hexdigest}.{self.url.split('.')[-1]}"
+        self.local_file = os.path.join(self.local_dir, self.file_name)
         response = requests.request(url=self.url)
         with open(self.local_file, "wb") as file:
             file.write(response.content)

@@ -130,3 +130,5 @@ dmypy.json
 
 # 配置文件
 config.ini
+# 输出文剑
+output/
