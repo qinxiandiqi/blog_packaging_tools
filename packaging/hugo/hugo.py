@@ -29,7 +29,10 @@ class HugoPacker(Packer):
         for image in images:
             md = md.replace(image.url, image.file_name)
         post_txt = self.default_template.safe_substitute(
-
+            title=f'"{post.name}"'
+            date=post.publish_time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+            authors=f'"{post.author}"',
+            content = md
         )
         with open(os.path.join(post_dir, "_index.md"), "w") as post_file:
             post_file.write(post_txt)

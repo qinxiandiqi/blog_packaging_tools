@@ -15,11 +15,11 @@ from blogs.blog import *
 class CSDNPost(Post):
     """CSDN博客文章内容"""
 
-    def __init__(self, id: str = "", publish_time: datetime = ...,
+    def __init__(self, id: str = "", author: str = "", publish_time: datetime = ...,
                  read_num: int = 0, comment_num: int = 0, name: str = "",
                  tags: List[str] = ..., categories: List[str] = ..., type:
                  PostType = PostType.Original, html: str = "", markdown: str = ""):
-        super().__init__(id, publish_time, read_num, comment_num,
+        super().__init__(id, author, publish_time, read_num, comment_num,
                          name, tags, categories, type, html, markdown)
 
     def sync(self, cookie):
@@ -56,9 +56,9 @@ class CSDNBlog(Blog):
 
     def __init__(self, cp: ConfigParser) -> None:
         super().__init__(cp)
-        self.author_id = cp.get("csdn", "author")
-        self.cookie = cp.get("csdn", "cookie").encode(
-            "utf-8").decode("latin1")
+        self.blog_id = cp.get("csdn", "blog_id")
+        self.author = cp.get("csdn", "author")
+        self.cookie = cp.get("csdn", "cookie").encode("utf-8").decode("latin1")
         self.start_page = cp.getint("csdn", "start_page")
         self.end_page = cp.getint("csdn", "end_page")
 
@@ -77,7 +77,7 @@ class CSDNBlog(Blog):
 
     def __scan_posts_by_page(self, page: int) -> List[Post]:
         """扫描博客文章，从博客分页获取文章列表基本信息"""
-        url = f'https://blog.csdn.net/{self.author_id}/article/list/{page}'
+        url = f'https://blog.csdn.net/{self.blog_id}/article/list/{page}'
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.67 Safari/537.36 Edg/87.0.664.47'}
         response = requests.get(url, headers=headers)
@@ -89,9 +89,10 @@ class CSDNBlog(Blog):
             try:
                 post = CSDNPost()
                 post.id = div.attrs["data-articleid"]
-                date = div.find('span', attrs={'class': 'date'}).get_text()
+                post.author = self.author
+                date = f"${div.find('span', attrs={'class': 'date'}).get_text()}+0800"
                 post.publish_time = datetime.strptime(
-                    date, "%Y-%m-%d %H:%M:%S")
+                    date, "%Y-%m-%d %H:%M:%S%z")
                 nums = div.find_all('span', attrs={'class': 'read-num'})
                 if len(nums) >= 1:
                     post.read_num = int(nums[0].get_text())

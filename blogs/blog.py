@@ -16,12 +16,14 @@ class PostType(Enum):
 class Post:
     """文章"""
 
-    def __init__(self, id: str = "", publish_time: datetime = datetime.today(),
+    def __init__(self, id: str = "", author: str = "",
+                 publish_time: datetime = datetime.today(),
                  read_num: int = 0, comment_num: int = 0, name: str = "",
                  tags: List[str] = [], categories: List[str] = [],
                  type: PostType = PostType.Original,
                  html: str = "", markdown: str = ""):
         self.id = id
+        self.author = author
         self.publish_time = publish_time
         self.read_num = read_num
         self.comment_num = comment_num

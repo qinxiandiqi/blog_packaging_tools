@@ -18,3 +18,5 @@ draft: false
 read_num: ${read}
 comment_num: ${comment_num}
 ---
+
+${content}
