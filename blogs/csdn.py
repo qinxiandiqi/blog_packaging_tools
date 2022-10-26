@@ -18,9 +18,10 @@ class CSDNPost(Post):
     def __init__(self, id: str = "", author: str = "", publish_time: datetime = ...,
                  read_num: int = 0, comment_num: int = 0, name: str = "",
                  tags: List[str] = ..., categories: List[str] = ..., type:
-                 PostType = PostType.Original, html: str = "", markdown: str = ""):
+                 PostType = PostType.Original, summary: str = "",
+                 html: str = "", markdown: str = ""):
         super().__init__(id, author, publish_time, read_num, comment_num,
-                         name, tags, categories, type, html, markdown)
+                         name, tags, categories, type, summary, html, markdown)
 
     def sync(self, cookie):
         """获取文章详情数据"""
@@ -42,6 +43,7 @@ class CSDNPost(Post):
                 self.type = PostType.Original
             elif type == 'translated':
                 self.type = PostType.Translate
+            self.summary =  blog_json['data']['description']
             self.html = blog_json['data']['content']
             self.markdown = blog_json['data']['markdowncontent']
             if len(self.markdown) <= 0:
@@ -74,6 +76,7 @@ class CSDNBlog(Blog):
             post.sync(self.cookie)
             print(post.__dict__)
             time.sleep(1)
+        return posts
 
     def __scan_posts_by_page(self, page: int) -> List[Post]:
         """扫描博客文章，从博客分页获取文章列表基本信息"""
@@ -90,7 +93,7 @@ class CSDNBlog(Blog):
                 post = CSDNPost()
                 post.id = div.attrs["data-articleid"]
                 post.author = self.author
-                date = f"${div.find('span', attrs={'class': 'date'}).get_text()}+0800"
+                date = f"{div.find('span', attrs={'class': 'date'}).get_text()}+0800"
                 post.publish_time = datetime.strptime(
                     date, "%Y-%m-%d %H:%M:%S%z")
                 nums = div.find_all('span', attrs={'class': 'read-num'})

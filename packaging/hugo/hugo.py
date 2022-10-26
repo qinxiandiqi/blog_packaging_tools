@@ -28,11 +28,21 @@ class HugoPacker(Packer):
         images = markdown.download_markdown_images(md, post_dir)
         for image in images:
             md = md.replace(image.url, image.file_name)
+        summary = post.summary.replace("\n", "")
+        series = [f'"{x}"' for x in post.categories]
+        tags = [f'"{x}"' for x in post.tags]
         post_txt = self.default_template.safe_substitute(
-            title=f'"{post.name}"'
+            title=f'"{post.name}"',
             date=post.publish_time.strftime("%Y-%m-%dT%H:%M:%S%z"),
             authors=f'"{post.author}"',
-            content = md
+            summary=f'"{summary}"',
+            series=f'{", ".join(series)}',
+            categories=f'{", ".join(series)}',
+            tags=f'{", ".join(tags)}',
+            images="",
+            read_num=post.read_num,
+            comment_num=post.comment_num,
+            content=md
         )
         with open(os.path.join(post_dir, "_index.md"), "w") as post_file:
             post_file.write(post_txt)

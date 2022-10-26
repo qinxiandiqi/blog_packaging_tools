@@ -20,7 +20,7 @@ class Post:
                  publish_time: datetime = datetime.today(),
                  read_num: int = 0, comment_num: int = 0, name: str = "",
                  tags: List[str] = [], categories: List[str] = [],
-                 type: PostType = PostType.Original,
+                 type: PostType = PostType.Original, summary: str = "",
                  html: str = "", markdown: str = ""):
         self.id = id
         self.author = author
@@ -31,6 +31,7 @@ class Post:
         self.tags = tags
         self.categories = categories
         self.type = type
+        self.summary = summary
         self.html = html
         self.markdown = markdown
 

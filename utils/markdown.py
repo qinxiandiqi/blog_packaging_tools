@@ -3,25 +3,28 @@
 import hashlib
 import os
 import re
+from io import BytesIO
 from itertools import chain
 from typing import List
 
 import requests
+from PIL import Image
 
 
 class MarkdownImage:
     def __init__(self, url: str, local_dir: str) -> None:
         self.url = url
+        if not os.path.exists(local_dir):
+            os.makedirs(local_dir)
         self.local_dir = local_dir
-        if not os.path.exists(dir):
-            os.makedirs(dir)
 
     def download_to_local(self):
+        response = requests.get(url=self.url)
+        image = Image.open(BytesIO(response.content))
         md5 = hashlib.md5()
-        md5.update(self.url)
-        self.file_name = f"{md5.hexdigest}.{self.url.split('.')[-1]}"
+        md5.update(self.url.encode("utf-8"))
+        self.file_name = f"{md5.hexdigest()}.{image.format.lower()}"
         self.local_file = os.path.join(self.local_dir, self.file_name)
-        response = requests.request(url=self.url)
         with open(self.local_file, "wb") as file:
             file.write(response.content)
 
