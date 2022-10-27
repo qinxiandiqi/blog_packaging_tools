@@ -44,5 +44,5 @@ class HugoPacker(Packer):
             comment_num=post.comment_num,
             content=md
         )
-        with open(os.path.join(post_dir, "_index.md"), "w") as post_file:
+        with open(os.path.join(post_dir, "index.md"), "w") as post_file:
             post_file.write(post_txt)
