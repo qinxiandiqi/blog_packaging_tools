@@ -3,7 +3,8 @@
 from configparser import ConfigParser
 from datetime import datetime
 from enum import Enum, unique
-from typing import List
+from types import FunctionType
+from typing import Callable, List
 
 
 @unique
@@ -36,17 +37,32 @@ class Post:
         self.markdown = markdown
 
 
+class Packer:
+    def __init__(self, cp: ConfigParser):
+        pass
+
+    def pack_post(self, post: Post):
+        """打包博客文章"""
+        pass
+
+
 class Blog:
     """博客"""
 
-    def __init__(self, cp: ConfigParser) -> None:
+    def __init__(self, cp: ConfigParser, packer: Packer) -> None:
         self.cp = cp
+        self.packer = packer
         self.posts: List[Post] = []
 
     def scan(self) -> None:
         """扫描博客文章"""
         self.posts = self._scan_posts()
 
-    def _scan_posts(self) -> List[Post]:
+    def pack(self) -> None:
+        """打包博客文章"""
+        self.posts = self._scan_posts(
+            action=lambda p: self.packer.pack_post(p))
+
+    def _scan_posts(self, action: Callable[[Post], None] = None) -> List[Post]:
         """扫描博客文章"""
         return []

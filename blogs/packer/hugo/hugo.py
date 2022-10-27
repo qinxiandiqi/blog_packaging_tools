@@ -3,7 +3,7 @@
 import os
 import string
 
-from packaging.packer import *
+from blogs.blog import *
 from utils import markdown
 
 
@@ -46,8 +46,3 @@ class HugoPacker(Packer):
         )
         with open(os.path.join(post_dir, "_index.md"), "w") as post_file:
             post_file.write(post_txt)
-
-    def pack_blog(self, blog: Blog):
-        """打包博客"""
-        for post in blog.posts:
-            self.pack_post(post)

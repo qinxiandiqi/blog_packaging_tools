@@ -43,7 +43,7 @@ class CSDNPost(Post):
                 self.type = PostType.Original
             elif type == 'translated':
                 self.type = PostType.Translate
-            self.summary =  blog_json['data']['description']
+            self.summary = blog_json['data']['description']
             self.html = blog_json['data']['content']
             self.markdown = blog_json['data']['markdowncontent']
             if len(self.markdown) <= 0:
@@ -56,15 +56,15 @@ class CSDNPost(Post):
 class CSDNBlog(Blog):
     """CSDN博客"""
 
-    def __init__(self, cp: ConfigParser) -> None:
-        super().__init__(cp)
+    def __init__(self, cp: ConfigParser, packer: Packer) -> None:
+        super().__init__(cp, packer)
         self.blog_id = cp.get("csdn", "blog_id")
         self.author = cp.get("csdn", "author")
         self.cookie = cp.get("csdn", "cookie").encode("utf-8").decode("latin1")
         self.start_page = cp.getint("csdn", "start_page")
         self.end_page = cp.getint("csdn", "end_page")
 
-    def _scan_posts(self) -> List[Post]:
+    def _scan_posts(self, action: Callable[[Post], None]) -> List[Post]:
         posts = []
         for page in range(self.start_page, self.end_page + 1):
             page_posts = self.__scan_posts_by_page(page=page)
@@ -75,6 +75,8 @@ class CSDNBlog(Blog):
         for post in posts:
             post.sync(self.cookie)
             print(post.__dict__)
+            if action is not None:
+                action(post)
             time.sleep(1)
         return posts
 
