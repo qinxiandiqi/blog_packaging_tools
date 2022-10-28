@@ -28,8 +28,11 @@ class HugoPacker(Packer):
         images = markdown.download_markdown_images(md, post_dir)
         for image in images:
             md = md.replace(image.url, image.file_name)
-        summary = post.summary.replace("\n", "")
+        summary = post.summary.replace("\\", "\\\\").replace("\"", "\\\"")
         series = [f'"{x}"' for x in post.categories]
+        categories = series[:]
+        if post.type is PostType.Translate:
+            categories.insert(0, '"翻译"')
         tags = [f'"{x}"' for x in post.tags]
         post_txt = self.default_template.safe_substitute(
             title=f'"{post.name}"',
@@ -37,7 +40,7 @@ class HugoPacker(Packer):
             authors=f'"{post.author}"',
             summary=f'"{summary}"',
             series=f'{", ".join(series)}',
-            categories=f'{", ".join(series)}',
+            categories=f'{", ".join(categories)}',
             tags=f'{", ".join(tags)}',
             images="",
             read_num=post.read_num,

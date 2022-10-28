@@ -1,6 +1,11 @@
 [csdn]
+#博客id
 blog_id=
+#作者名
 author=''
+#CSDN cookie
 cookie=''
+#扫描开始分页页码
 start_page=1
+#扫描结束分页页码
 end_page=100
